@@ -9,10 +9,7 @@ import jakarta.validation.constraints.NotBlank;
  * @author Rom Gat
  */
 public class NameBoundary {
-	@NotBlank(message = "Empty first name")
 	private String firstName;
-	
-	@NotBlank(message = "Empty last name")
 	private String lastName;
 	
 	

@@ -22,9 +22,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webflux-ui
 	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.3.0'
 	
-	// Jakarta inclusion for member validation.
-	implementation 'jakarta.platform:jakarta.jakartaee-api:9.1.0'
-	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 }

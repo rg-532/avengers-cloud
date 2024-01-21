@@ -19,21 +19,13 @@ import jakarta.validation.constraints.Size;
  * @author Rom Gat
  */
 public class UserBoundary {
-	@Email(message = "Invalid email format")
 	private String email;
-	
-	@Valid
 	private NameBoundary name;
-	
-	@NotBlank(message = "Empty password")
-	@Size(min = 3, message = "Password must be at least 3 characters")
 	private String password;
 	
-	@NotBlank(message = "Empty birthdate")
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private Date birthdate;
 
-	@NotBlank(message = "Empty recruitdate")
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private Date recruitdate;
 	
