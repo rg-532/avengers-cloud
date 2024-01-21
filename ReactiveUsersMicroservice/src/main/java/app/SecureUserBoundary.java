@@ -5,29 +5,20 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-
 /**
  * The class {@code SecureUserBoundary} is another boundary class representing a user, <b>without the password</b>.
  * 
- * This boundary should only be <b>sent away</b> to the outside as it does not contain the user's password.
+ * This boundary should only be returned on <b>HTTP GET methods</b>, since we do not return passwords on those methods.
  *
  * @author Rom Gat
  */
 public class SecureUserBoundary {
-	@Email(message = "Invalid email format")
 	private String email;
-	
-	@Valid
 	private NameBoundary name;
 	
-	@NotBlank(message = "Empty birthdate")
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private Date birthdate;
 
-	@NotBlank(message = "Empty recruitdate")
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private Date recruitdate;
 	

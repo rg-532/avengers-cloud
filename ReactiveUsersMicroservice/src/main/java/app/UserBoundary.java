@@ -13,7 +13,8 @@ import jakarta.validation.constraints.Size;
 /**
  * The class {@code UserBoundary} is a boundary class representing a user.
  * 
- * This boundary should only be <b>received</b> from the outside as it does contain the user's password.
+ * This boundary should only be used in <b>HTTP POST methods</b> as these are the only ones which receive and return the
+ * user's password in the request body. For all other purposes, see {@code SecureUserBoundary}.
  *
  * @author Rom Gat
  */
