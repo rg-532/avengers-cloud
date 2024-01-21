@@ -2,6 +2,9 @@ package app;
 
 import jakarta.validation.constraints.NotBlank;
 
+/**TODO - add this doc.
+ * 
+ */
 public class NameBoundary {
 	@NotBlank(message = "Empty first name")
 	private String firstName;
