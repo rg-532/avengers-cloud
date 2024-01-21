@@ -2,8 +2,11 @@ package app;
 
 import jakarta.validation.constraints.NotBlank;
 
-/**TODO - add this doc.
+/**
+ * The class {@code NameBoundary} is a sub-boundary class of {@code UserBoundary} and {@code SecureUserBoundary} representing
+ * a user's full name.
  * 
+ * @author Rom Gat
  */
 public class NameBoundary {
 	@NotBlank(message = "Empty first name")
