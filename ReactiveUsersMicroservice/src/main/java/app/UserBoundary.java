@@ -5,11 +5,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-
 /**
  * The class {@code UserBoundary} is a boundary class representing a user.
  * 
@@ -33,6 +28,22 @@ public class UserBoundary {
 
 	
 	public UserBoundary() {/*do nothing*/}
+	
+	public UserBoundary(UserEntity entity) {
+		/* Converter method: entity -> boundary.
+		 */
+		this.setEmail(entity.getEmail());
+		
+		NameBoundary name = new NameBoundary();
+		name.setFirstName(entity.getFirstName());
+		name.setLastName(entity.getLastName());
+		this.setName(name);
+
+		this.setPassword(entity.getPassword());
+		this.setBirthdate(entity.getBirthdate());
+		this.setRecruitdate(entity.getRecruitdate());
+		this.setRoles(entity.getRoles());
+	}
 	
 	public UserEntity toEntity() {
 		/* Converter method: boundary -> entity.

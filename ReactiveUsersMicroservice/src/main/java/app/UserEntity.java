@@ -22,7 +22,8 @@ public class UserEntity {
 	private List<String> roles;
 	
 	
-	public UserEntity() {/*do nothing*/}
+	public UserEntity() {
+	}
 
 	
 	public String getEmail() {
