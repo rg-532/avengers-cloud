@@ -1,4 +1,4 @@
-package app;
+package app.user;
 
 import java.util.Date;
 import java.util.List;
@@ -6,17 +6,15 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
- * The class {@code UserBoundary} is a boundary class representing a user.
+ * The class {@code SecureUserBoundary} is another boundary class representing a user, <b>without the password</b>.
  * 
- * This boundary should only be used in <b>HTTP POST methods</b> as these are the only ones which receive and return the
- * user's password in the request body. For all other purposes, see {@code SecureUserBoundary}.
+ * This boundary should only be returned on <b>HTTP GET methods</b>, since we do not return passwords on those methods.
  *
  * @author Rom Gat
  */
-public class UserBoundary {
+public class SecureUserBoundary {
 	private String email;
 	private NameBoundary name;
-	private String password;
 	
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private Date birthdate;
@@ -27,9 +25,9 @@ public class UserBoundary {
 	private List<String> roles;
 
 	
-	public UserBoundary() {/*do nothing*/}
+	public SecureUserBoundary() {/*do nothing*/}
 	
-	public UserBoundary(UserEntity entity) {
+	public SecureUserBoundary(UserEntity entity) {
 		/* Converter method: entity -> boundary.
 		 */
 		this.setEmail(entity.getEmail());
@@ -39,29 +37,12 @@ public class UserBoundary {
 		name.setLastName(entity.getLastName());
 		this.setName(name);
 
-		this.setPassword(entity.getPassword());
 		this.setBirthdate(entity.getBirthdate());
 		this.setRecruitdate(entity.getRecruitdate());
 		this.setRoles(entity.getRoles());
 	}
 	
-	public UserEntity toEntity() {
-		/* Converter method: boundary -> entity.
-		 */
-		UserEntity entity = new UserEntity();
-		
-		entity.setEmail(this.getEmail());
-		entity.setFirstName(this.getName().getFirstName());
-		entity.setLastName(this.getName().getLastName());
-		entity.setPassword(this.getPassword());
-		entity.setBirthdate(this.getBirthdate());
-		entity.setRecruitdate(this.getRecruitdate());
-		entity.setRoles(this.getRoles());
-		
-		return entity;
-	}
 	
-
 	public String getEmail() {
 		return email;
 	}
@@ -76,14 +57,6 @@ public class UserBoundary {
 
 	public void setName(NameBoundary name) {
 		this.name = name;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public Date getBirthdate() {
@@ -113,7 +86,7 @@ public class UserBoundary {
 	
 	@Override
 	public String toString() {
-		return "UserBoundary [email=" + email + ", name=" + name + ", password=" + password + ", birthdate=" + birthdate
-				+ ", recruitdate=" + recruitdate + ", roles=" + roles + "]";
+		return "SecureUserBoundary [email=" + email + ", name=" + name + ", birthdate=" + birthdate + ", recruitdate="
+				+ recruitdate + ", roles=" + roles + "]";
 	}
 }

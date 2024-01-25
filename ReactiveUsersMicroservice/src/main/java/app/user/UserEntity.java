@@ -1,10 +1,15 @@
-package app;
+package app.user;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
+import app.department.DepartmentEntity;
 
 /**
  * The class {@code UserEntity} is an entity class representing a user in the database.
@@ -21,8 +26,11 @@ public class UserEntity {
 	private Date recruitdate;
 	private List<String> roles;
 	
+	@DocumentReference private Set<DepartmentEntity> departments;
+	
 	
 	public UserEntity() {
+		this.departments = new HashSet<>();
 	}
 
 	
@@ -80,6 +88,18 @@ public class UserEntity {
 
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
+	}
+
+	public Set<DepartmentEntity> getDepartments() {
+		return departments;
+	}
+
+	public void setDepartments(Set<DepartmentEntity> departments) {
+		this.departments = departments;
+	}
+	
+	public void addDepartment(DepartmentEntity department) {
+		this.departments.add(department);
 	}
 
 

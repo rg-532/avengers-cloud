@@ -1,10 +1,11 @@
-package app;
+package app.user;
 
 import java.util.Date;
 
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.repository.query.Param;
 
+import app.department.DepartmentEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,6 +23,7 @@ public interface ReactiveUserCrud extends ReactiveMongoRepository<UserEntity, St
 	
 	public Flux<UserEntity> findAllByBirthdateLessThan(
 			@Param("date") Date date);
-	
-	
+
+	public Flux<UserEntity> findAllByDepartmentsContains(
+			@Param("departments") DepartmentEntity department);
 }

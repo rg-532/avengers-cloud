@@ -1,4 +1,4 @@
-package app;
+package app.user;
 
 /**
  * The class {@code NameBoundary} is a sub-boundary class of {@code UserBoundary} and {@code SecureUserBoundary} representing

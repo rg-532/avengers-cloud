@@ -1,32 +1,28 @@
-package app;
+package app.department;
 
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * The class {@code ReactiveUserController} implements all required APIs for users.
+ * The class {@code ReactiveDepartmentController} implements all required APIs for departments.
  * 
  * @author Rom Gat
  */
 @RestController
-@Validated
-@RequestMapping(path = {"/users"})
-public class ReactiveUserController {
-	private UserService service;
-
-	public ReactiveUserController(UserService service) {
+@RequestMapping(path = {"/departments"})
+public class ReactiveDepartmentController {
+	private DepartmentService service;
+	
+	public ReactiveDepartmentController(DepartmentService service) {
 		this.service = service;
 	}
 	
@@ -34,38 +30,35 @@ public class ReactiveUserController {
 	@PostMapping(
 			produces = {MediaType.APPLICATION_JSON_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public Mono<UserBoundary> createUser(
-			@Valid @RequestBody UserBoundary user) {
+	public Mono<DepartmentBoundary> createDepartment(
+			@RequestBody DepartmentBoundary department) {
 		return this.service
-				.createUser(user)
+				.createDepartment(department)
 				.log();
 	}
 	
 	@GetMapping(
-			path = {"/{email}"},
+			path = {"/{deptId}"},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Mono<SecureUserBoundary> getUserByEmailAndPassword(
-			@PathVariable("email") String email,
-			@RequestParam(name="password", required=true) String password) {
+	public Mono<DepartmentBoundary> getDepartmentById(
+			@PathVariable("deptId") String deptId) {
 		return this.service
-				.getUserByEmailAndPassword(email, password)
+				.getDepartmentById(deptId)
 				.log();
 	}
 	
 	@GetMapping(
 			produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-	public Flux<SecureUserBoundary> getUsersByCriteria(
-			@RequestParam(name="criteria", required=false) String criteria,
-			@RequestParam(name="value", required=false) String value) {
+	public Flux<DepartmentBoundary> getAllDepartments() {
 		return this.service
-				.getUsersByCriteria(criteria, value)
+				.getAllDepartments()
 				.log();
 	}
 	
 	@DeleteMapping
-	public Mono<Void> deleteAllUsers() {
+	public Mono<Void> deleteAllDepartments() {
 		return this.service
-				.deleteAllUsers()
+				.deleteAllDepartments()
 				.log();
 	}
 }
