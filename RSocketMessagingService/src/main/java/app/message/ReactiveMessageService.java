@@ -81,10 +81,6 @@ public class ReactiveMessageService implements MessageService {
 			return this.crud
 					.findAllByExternalReferencesContainsWithService(
 							externalReference.getService())
-					.map(m -> {
-						System.err.println(m.getExternalReferences());
-						return m;
-					})
 					.map(MessageBoundary::new)
 					.log();
 		}
