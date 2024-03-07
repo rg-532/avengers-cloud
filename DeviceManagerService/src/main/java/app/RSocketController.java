@@ -10,22 +10,23 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import app.objects.DeviceNotificationBoundary;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Controller
 public class RSocketController {
-	ManagerService service;
+	NotificationService service;
 	private Log logger = LogFactory.getLog(RSocketController.class);
 	
-	public RSocketController(ManagerService service) {
+	public RSocketController(NotificationService service) {
 		this.service = service;
 	}
 	
 	
 	@MessageMapping("registerDevice-req-resp")
-	public Mono<DeviceBoundary> registerDevice(
-			@Payload DeviceBoundary device) {
+	public Mono<DeviceNotificationBoundary> registerDevice(
+			@Payload DeviceNotificationBoundary device) {
 		this.logger.debug("invoking: registerDevice-req-resp.");
 		return this.service.registerDevice(device);
 	}
@@ -33,7 +34,7 @@ public class RSocketController {
 	@MessageMapping("updateDevice-{id}-fnf")
 	public Mono<Void> updateDevice(
 			@DestinationVariable(value = "id") String id,
-			@Payload DeviceBoundary update) {
+			@Payload DeviceNotificationBoundary update) {
 		this.logger.debug("invoking: updateDevice-{id}-fnf with id=" + id +".");
 		return this.service.updateDevice(id, update);
 	}
@@ -47,21 +48,21 @@ public class RSocketController {
 	}
 	
 	@MessageMapping("getAllDevices-req-stream")
-	public Flux<DeviceBoundary> getAllDevices() {
+	public Flux<DeviceNotificationBoundary> getAllDevices() {
 		this.logger.debug("invoking: getAllDevices-req-stream.");
 		return this.service.getAllDevices();
 	}
 
 	@MessageMapping("getDeviceById-{id}-req-resp")
-	public Mono<DeviceBoundary> getDeviceById(
+	public Mono<DeviceNotificationBoundary> getDeviceById(
 			@DestinationVariable(value = "id") String id) {
 		this.logger.debug("invoking: getDeviceById-{id}-req-resp with id=" + id +".");
 		return this.service.getDeviceById(id);
 	}
 	
 	@MessageMapping("getDevicesByExample-req-stream")
-	public Flux<DeviceBoundary> getDevicesByExample(
-			@Payload DeviceBoundary example) {
+	public Flux<DeviceNotificationBoundary> getDevicesByExample(
+			@Payload DeviceNotificationBoundary example) {
 		this.logger.debug("invoking: getDevicesByExample-req-stream.");
 		return this.service.getDevicesByExample(example);
 	}

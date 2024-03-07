@@ -12,15 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.objects.DeviceNotificationBoundary;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = {"/devices"})
 public class HttpController {
-	ManagerService service;
+	NotificationService service;
 	
-	public HttpController(ManagerService service) {
+	public HttpController(NotificationService service) {
 		this.service = service;
 	}
 	
@@ -28,10 +29,10 @@ public class HttpController {
 	@PostMapping(
 			consumes = {MediaType.APPLICATION_JSON_VALUE},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Mono<DeviceBoundary> registerDevice(
-			@RequestBody DeviceBoundary device) {
+	public Mono<DeviceNotificationBoundary> registerDevice(
+			@RequestBody DeviceNotificationBoundary notification) {
 		return this.service
-				.registerDevice(device)
+				.registerDevice(notification)
 				.log();
 	}
 	
@@ -40,7 +41,7 @@ public class HttpController {
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	public Mono<Void> updateDevice(
 			@PathVariable("id") String id,
-			@RequestBody DeviceBoundary update) {
+			@RequestBody DeviceNotificationBoundary update) {
 		return this.service
 				.updateDevice(id, update)
 				.log();
@@ -59,7 +60,7 @@ public class HttpController {
 	
 	@GetMapping(
 			produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-	public Flux<DeviceBoundary> getAllDevices() {
+	public Flux<DeviceNotificationBoundary> getAllDevices() {
 		return this.service
 				.getAllDevices()
 				.log();
@@ -68,7 +69,7 @@ public class HttpController {
 	@GetMapping(
 			path = {"/{id}"},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Mono<DeviceBoundary> getDeviceById(
+	public Mono<DeviceNotificationBoundary> getDeviceById(
 			@PathVariable("id") String id) {
 		return this.service
 				.getDeviceById(id)
@@ -78,8 +79,8 @@ public class HttpController {
 	@PostMapping(
 			path = {"/getByExample"},
 			produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-	public Flux<DeviceBoundary> getDevicesByExample(
-			@RequestBody DeviceBoundary example) {
+	public Flux<DeviceNotificationBoundary> getDevicesByExample(
+			@RequestBody DeviceNotificationBoundary example) {
 		return this.service
 				.getDevicesByExample(example)
 				.log();

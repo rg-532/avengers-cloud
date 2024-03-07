@@ -8,6 +8,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import app.objects.DeviceEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,13 +21,13 @@ public class ManagerServiceImpl implements ManagerService {
 	}
 	
 	@Override
-	public Mono<DeviceBoundary> registerDevice(DeviceBoundary device) {
+	public Mono<DeviceEntity> registerDevice(DeviceEntity device) {
 		if (device.getType() == null) {
 			return Mono.error(new IllegalArgumentException("Type must not be null."));
 		}
 		
-		if (device.getAlias() == null) {
-			return Mono.error(new IllegalArgumentException("Alias must not be null."));
+		if (device.getLocation() == null) {
+			return Mono.error(new IllegalArgumentException("Location must not be null."));
 		}
 		
 		device.setId(null);
@@ -37,28 +38,38 @@ public class ManagerServiceImpl implements ManagerService {
 			device.setStatus(new HashMap<>());
 		}
 		
+		if (device.getAdditionalAttributes() == null) {
+			device.setAdditionalAttributes(new HashMap<>());
+		}
+		
 		return this.crud
-				.save(device.toEntity())
-				.map(DeviceBoundary::new)
+				.save(device)
 				.log();
 	}
 
 	@Override
-	public Mono<Void> updateDevice(String id, DeviceBoundary update) {
+	public Mono<Void> updateDevice(String id, DeviceEntity update) {
 		return this.crud
 				.findById(id)
 				.flatMap(original -> {
-					DeviceEntity updateEntity = update.toEntity();
 					original.setLastUpdateTimestamp(new Date());
 					
-					if (updateEntity.getType() != null)
-						original.setType(updateEntity.getType());
-					if (updateEntity.getAlias() != null)
-						original.setAlias(updateEntity.getAlias());
-					if (updateEntity.getStatus() != null)
-						original.setStatus(updateEntity.getStatus());
+					if (update.getType() != null)
+						original.setType(update.getType());
+					if (update.getLocation() != null)
+						original.setLocation(update.getLocation());
+					if (update.getStatus() != null)
+						original.setStatus(update.getStatus());
 					else
 						original.setStatus(new HashMap<>());
+					if (update.getAdditionalAttributes() != null)
+						original.setAdditionalAttributes(update.getAdditionalAttributes());
+					else
+						original.setAdditionalAttributes(new HashMap<>());
+					
+					original.setAlias(update.getAlias());
+					original.setManufacturerPowerInWatts(update.getManufacturerPowerInWatts());
+					original.setSubType(update.getSubType());
 					
 					return this.crud
 							.save(original);
@@ -85,28 +96,25 @@ public class ManagerServiceImpl implements ManagerService {
 	}
 
 	@Override
-	public Flux<DeviceBoundary> getAllDevices() {
+	public Flux<DeviceEntity> getAllDevices() {
 		return this.crud
 				.findAll()
-				.map(DeviceBoundary::new)
 				.log();
 	}
 
 	@Override
-	public Mono<DeviceBoundary> getDeviceById(String id) {
+	public Mono<DeviceEntity> getDeviceById(String id) {
 		return this.crud
 				.findById(id)
-				.map(DeviceBoundary::new)
 				.log();
 	}
 
 	@Override
-	public Flux<DeviceBoundary> getDevicesByExample(DeviceBoundary example) {
+	public Flux<DeviceEntity> getDevicesByExample(DeviceEntity example) {
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-		Example<DeviceEntity> toMatch = Example.of(example.toEntity(), matcher);
+		Example<DeviceEntity> toMatch = Example.of(example, matcher);
 		return this.crud
 				.findAll(toMatch)
-				.map(DeviceBoundary::new)
 				.log();
 	}
 

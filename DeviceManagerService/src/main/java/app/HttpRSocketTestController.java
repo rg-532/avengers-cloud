@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.objects.DeviceNotificationBoundary;
 import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -52,12 +53,12 @@ public class HttpRSocketTestController {
 	@PostMapping(
 			consumes = {MediaType.APPLICATION_JSON_VALUE},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Mono<DeviceBoundary> registerDevice(
-			@RequestBody DeviceBoundary device) {
+	public Mono<DeviceNotificationBoundary> registerDevice(
+			@RequestBody DeviceNotificationBoundary device) {
 		return this.requester
 				.route("registerDevice-req-resp")
 				.data(device)
-				.retrieveMono(DeviceBoundary.class)
+				.retrieveMono(DeviceNotificationBoundary.class)
 				.log();
 	}
 	
@@ -66,7 +67,7 @@ public class HttpRSocketTestController {
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	public Mono<Void> updateDevice(
 			@PathVariable("id") String id,
-			@RequestBody DeviceBoundary update) {
+			@RequestBody DeviceNotificationBoundary update) {
 		return this.requester
 				.route("updateDevice-{id}-fnf", id)
 				.data(update)
@@ -89,33 +90,33 @@ public class HttpRSocketTestController {
 	
 	@GetMapping(
 			produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-	public Flux<DeviceBoundary> getAllDevices() {
+	public Flux<DeviceNotificationBoundary> getAllDevices() {
 		return this.requester
 				.route("getAllDevices-req-stream")
-				.retrieveFlux(DeviceBoundary.class)
+				.retrieveFlux(DeviceNotificationBoundary.class)
 				.log();
 	}
 
 	@GetMapping(
 			path = {"/{id}"},
 			produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Mono<DeviceBoundary> getDeviceById(
+	public Mono<DeviceNotificationBoundary> getDeviceById(
 			@PathVariable("id") String id) {
 		return this.requester
 				.route("getDeviceById-{id}-req-resp", id)
-				.retrieveMono(DeviceBoundary.class)
+				.retrieveMono(DeviceNotificationBoundary.class)
 				.log();
 	}
 	
 	@PostMapping(
 			path = {"/getByExample"},
 			produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-	public Flux<DeviceBoundary> getDevicesByExample(
-			@RequestBody DeviceBoundary example) {
+	public Flux<DeviceNotificationBoundary> getDevicesByExample(
+			@RequestBody DeviceNotificationBoundary example) {
 		return this.requester
 				.route("getDevicesByExample-req-stream")
 				.data(example)
-				.retrieveFlux(DeviceBoundary.class)
+				.retrieveFlux(DeviceNotificationBoundary.class)
 				.log();
 	}
 	
