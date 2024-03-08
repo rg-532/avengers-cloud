@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import app.objects.DeviceBoundary;
 import app.objects.DeviceEntity;
 import app.objects.DeviceNotificationBoundary;
@@ -21,11 +19,7 @@ public class NotificationToEntityHelper {
 	private String appName;
 	
 	
-	public NotificationToEntityHelper() {
-	}
-	
-	@Value("${spring.application.name}")
-	public void setAppName(String appName) {
+	public NotificationToEntityHelper(String appName) {
 		this.appName = appName;
 	}
 	
@@ -52,8 +46,8 @@ public class NotificationToEntityHelper {
 	 * @return				Converted {@code DeviceEntity}.
 	 */
 	public DeviceEntity extractEntity(DeviceNotificationBoundary notification) {
-		DeviceEntity entity = notification.getDevice().toEntity();
-		entity.setAlias(notification.getDeviceAlias());
+		DeviceEntity entity = notification.fetchDevice().toEntity();
+		entity.setAlias(notification.fetchDeviceAlias());
 		
 		return entity;
 	}
@@ -67,7 +61,7 @@ public class NotificationToEntityHelper {
 	 */
 	public DeviceNotificationBoundary insertEntityIntoNotification(
 			Tuple2<DeviceEntity, DeviceNotificationBoundary> tuple) {
-		tuple.getT2().setDevice(new DeviceBoundary(tuple.getT1()));
+		tuple.getT2().fetchDevice(new DeviceBoundary(tuple.getT1()));
 		return tuple.getT2();
 	}
 	
@@ -86,16 +80,24 @@ public class NotificationToEntityHelper {
 		boundary.setMessageType("deviceNotification");
 		boundary.setSummary(summary);
 		
-		if (entity == null)
+		if (entity == null) {
 			boundary.setMessageDetails(
 					Collections.singletonMap("none", null));
-		else
+		}
+		else {
 			boundary.setMessageDetails(
 					Collections.singletonMap(entity.getAlias(), new DeviceBoundary(entity)));
+		}
 		
 		ExternalReferenceBoundary externalReference = new ExternalReferenceBoundary();
 		externalReference.setService(this.appName);
-		externalReference.setExternalServiceId(boundary.getDevice().getId());
+		
+		if (entity == null) {
+			externalReference.setExternalServiceId("none");
+		}
+		else {
+			externalReference.setExternalServiceId(boundary.fetchDevice().getId());
+		}
 		
 		ArrayList<ExternalReferenceBoundary> externalReferenceList = new ArrayList<>();
 		externalReferenceList.add(externalReference);

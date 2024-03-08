@@ -14,7 +14,7 @@ public class DeviceEntity {
 	private Date registrationTimestamp;
 	private Date lastUpdateTimestamp;
 	private String location;
-	private double manufacturerPowerInWatts;
+	private Double manufacturerPowerInWatts;
 	private Map<String, Object> additionalAttributes;
 	private Map<String, Object> status;
 	
@@ -86,12 +86,12 @@ public class DeviceEntity {
 	}
 
 
-	public double getManufacturerPowerInWatts() {
+	public Double getManufacturerPowerInWatts() {
 		return manufacturerPowerInWatts;
 	}
 
 
-	public void setManufacturerPowerInWatts(double manufacturerPowerInWatts) {
+	public void setManufacturerPowerInWatts(Double manufacturerPowerInWatts) {
 		this.manufacturerPowerInWatts = manufacturerPowerInWatts;
 	}
 

@@ -20,20 +20,20 @@ public class DeviceNotificationBoundary {
 	///////////////////////////////////
 	//  SUPPORT GETTERS AND SETTERS  //
 	///////////////////////////////////
-	public DeviceBoundary getDevice() {
+	public DeviceBoundary fetchDevice() {
 		return this.messageDetails.values().iterator().next();
 	}
 	
-	public void setDevice(DeviceBoundary device) {
-		this.messageDetails.put(this.getDeviceAlias(), device);
+	public void fetchDevice(DeviceBoundary device) {
+		this.messageDetails.put(this.fetchDeviceAlias(), device);
 	}
 	
-	public String getDeviceAlias() {
+	public String fetchDeviceAlias() {
 		return this.messageDetails.keySet().iterator().next();
 	}
 	
-	public void setDeviceAlias(String alias) {
-		this.messageDetails = Collections.singletonMap(alias, this.getDevice());
+	public void fetchDeviceAlias(String alias) {
+		this.messageDetails = Collections.singletonMap(alias, this.fetchDevice());
 	}
 	
 	
