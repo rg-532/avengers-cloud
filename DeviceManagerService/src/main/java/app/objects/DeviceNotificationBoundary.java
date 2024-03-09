@@ -1,9 +1,7 @@
 package app.objects;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class DeviceNotificationBoundary {
 	private String messageId;
@@ -11,35 +9,12 @@ public class DeviceNotificationBoundary {
 	private String messageType;
 	private String summary;
 	private List<ExternalReferenceBoundary> externalReferences;
-	private Map<String, DeviceBoundary> messageDetails;
+	private DeviceBoundaryWrapper messageDetails;
 	
 	public DeviceNotificationBoundary() {
-		super();
 	}
 
-	///////////////////////////////////
-	//  SUPPORT GETTERS AND SETTERS  //
-	///////////////////////////////////
-	public DeviceBoundary fetchDevice() {
-		return this.messageDetails.values().iterator().next();
-	}
-	
-	public void fetchDevice(DeviceBoundary device) {
-		this.messageDetails.put(this.fetchDeviceAlias(), device);
-	}
-	
-	public String fetchDeviceAlias() {
-		return this.messageDetails.keySet().iterator().next();
-	}
-	
-	public void fetchDeviceAlias(String alias) {
-		this.messageDetails = Collections.singletonMap(alias, this.fetchDevice());
-	}
-	
-	
-	///////////////////////////////////
-	//  BASIC BEAN METHODS           //
-	///////////////////////////////////
+
 	public String getMessageId() {
 		return messageId;
 	}
@@ -80,11 +55,11 @@ public class DeviceNotificationBoundary {
 		this.externalReferences = externalReferences;
 	}
 
-	public Map<String, DeviceBoundary> getMessageDetails() {
+	public DeviceBoundaryWrapper getMessageDetails() {
 		return messageDetails;
 	}
 
-	public void setMessageDetails(Map<String, DeviceBoundary> messageDetails) {
+	public void setMessageDetails(DeviceBoundaryWrapper messageDetails) {
 		this.messageDetails = messageDetails;
 	}
 

@@ -43,9 +43,6 @@ public class DeviceBoundary {
 		entity.setAdditionalAttributes(this.getAdditionalAttributes());
 		entity.setStatus(this.getStatus());
 		
-		// Set at service level.
-		entity.setAlias("_to_set");
-		
 		return entity;
 	}
 

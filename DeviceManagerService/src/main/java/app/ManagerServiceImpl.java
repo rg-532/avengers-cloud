@@ -23,11 +23,11 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public Mono<DeviceEntity> registerDevice(DeviceEntity device) {
 		if (device.getType() == null) {
-			return Mono.error(new IllegalArgumentException("Type must not be null."));
+			return Mono.error(new IllegalArgumentException("ManagerServiceImpl :: Type must not be null."));
 		}
 		
 		if (device.getLocation() == null) {
-			return Mono.error(new IllegalArgumentException("Location must not be null."));
+			return Mono.error(new IllegalArgumentException("ManagerServiceImpl :: Location must not be null."));
 		}
 		
 		device.setId(null);
@@ -67,7 +67,6 @@ public class ManagerServiceImpl implements ManagerService {
 					else
 						original.setAdditionalAttributes(new HashMap<>());
 					
-					original.setAlias(update.getAlias());
 					original.setManufacturerPowerInWatts(update.getManufacturerPowerInWatts());
 					original.setSubType(update.getSubType());
 					
@@ -83,6 +82,8 @@ public class ManagerServiceImpl implements ManagerService {
 		return this.crud
 				.findById(id)
 				.flatMap(original -> {
+					original.setLastUpdateTimestamp(new Date());
+					
 					if (status != null)
 						original.setStatus(status);
 					else
@@ -113,6 +114,7 @@ public class ManagerServiceImpl implements ManagerService {
 	public Flux<DeviceEntity> getDevicesByExample(DeviceEntity example) {
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
 		Example<DeviceEntity> toMatch = Example.of(example, matcher);
+		
 		return this.crud
 				.findAll(toMatch)
 				.log();

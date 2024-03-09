@@ -1,11 +1,11 @@
 package app;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
 import app.objects.DeviceBoundary;
+import app.objects.DeviceBoundaryWrapper;
 import app.objects.DeviceEntity;
 import app.objects.DeviceNotificationBoundary;
 import app.objects.ExternalReferenceBoundary;
@@ -46,10 +46,7 @@ public class NotificationToEntityHelper {
 	 * @return				Converted {@code DeviceEntity}.
 	 */
 	public DeviceEntity extractEntity(DeviceNotificationBoundary notification) {
-		DeviceEntity entity = notification.fetchDevice().toEntity();
-		entity.setAlias(notification.fetchDeviceAlias());
-		
-		return entity;
+		return notification.getMessageDetails().getDevice().toEntity();
 	}
 	
 	
@@ -61,7 +58,7 @@ public class NotificationToEntityHelper {
 	 */
 	public DeviceNotificationBoundary insertEntityIntoNotification(
 			Tuple2<DeviceEntity, DeviceNotificationBoundary> tuple) {
-		tuple.getT2().fetchDevice(new DeviceBoundary(tuple.getT1()));
+		tuple.getT2().getMessageDetails().setDevice(new DeviceBoundary(tuple.getT1()));
 		return tuple.getT2();
 	}
 	
@@ -81,22 +78,20 @@ public class NotificationToEntityHelper {
 		boundary.setSummary(summary);
 		
 		if (entity == null) {
-			boundary.setMessageDetails(
-					Collections.singletonMap("none", null));
+			boundary.setMessageDetails(new DeviceBoundaryWrapper(null));
 		}
 		else {
-			boundary.setMessageDetails(
-					Collections.singletonMap(entity.getAlias(), new DeviceBoundary(entity)));
+			boundary.setMessageDetails(new DeviceBoundaryWrapper(new DeviceBoundary(entity)));
 		}
 		
 		ExternalReferenceBoundary externalReference = new ExternalReferenceBoundary();
 		externalReference.setService(this.appName);
 		
 		if (entity == null) {
-			externalReference.setExternalServiceId("none");
+			externalReference.setExternalServiceId(null);
 		}
 		else {
-			externalReference.setExternalServiceId(boundary.fetchDevice().getId());
+			externalReference.setExternalServiceId(boundary.getMessageDetails().getDevice().getId());
 		}
 		
 		ArrayList<ExternalReferenceBoundary> externalReferenceList = new ArrayList<>();

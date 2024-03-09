@@ -1,28 +1,35 @@
-/**TODO - Add calls for sending messages via Apache Kafka.
- */
-
 package app;
 
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.objects.DeviceEntity;
 import app.objects.DeviceNotificationBoundary;
 import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuples;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
 	ManagerService service;
 	String appName;
 	NotificationToEntityHelper helper;
+
+	ObjectMapper jackson;
+	StreamBridge kafka;
+	String targetTopic;
 	
-	public NotificationServiceImpl(ManagerService service) {
+	public NotificationServiceImpl(ManagerService service, StreamBridge kafka) {
 		this.service = service;
+		this.jackson = new ObjectMapper();
+		this.kafka = kafka;
+		
 		this.helper = null;
 	}
 	
@@ -31,17 +38,37 @@ public class NotificationServiceImpl implements NotificationService {
 		this.appName = appName;
 	}
 	
+	@Value("${target.topic.name}")
+	public void setTargetTopic(String targetTopic) {
+		this.targetTopic = targetTopic;
+	}
+	
 	@PostConstruct
 	public void init() {
 		this.helper = new NotificationToEntityHelper(this.appName);
 	}
+	
+	/**Sends a notification to Kafka.
+	 * 
+	 * @param notification	Notification to send to Kafka.
+	 * @return				Received notification.
+	 */
+	public Mono<DeviceNotificationBoundary> sendToKafka(DeviceNotificationBoundary notification) {
+		return Mono.just(notification)
+				.flatMap(n -> {
+					try {
+						return Mono.just(this.jackson.writeValueAsString(notification))
+								.map(notifStr -> {return this.kafka.send(this.targetTopic, notifStr);})
+								.then(Mono.just(notification));
+					} catch (JsonProcessingException jpe) {
+						return Mono.error(jpe);
+					}
+				});
+	}
+	
 
 	@Override
 	public Mono<DeviceNotificationBoundary> registerDevice(DeviceNotificationBoundary notification) {
-		if (notification.getMessageDetails().size() != 1) {
-			return Mono.error(new IllegalArgumentException("messageDetails must include 1 device only!"));
-		}
-		
 		notification = this.helper.initNotification(notification);
 		DeviceEntity entity = this.helper.extractEntity(notification);
 		
@@ -49,24 +76,22 @@ public class NotificationServiceImpl implements NotificationService {
 				.registerDevice(entity)
 				.zipWith(Mono.just(notification))
 				.map(this.helper::insertEntityIntoNotification)
-				// Eject message here.
+				.flatMap(this::sendToKafka)
 				.log();
 	}
 
 	@Override
 	public Mono<Void> updateDevice(String id, DeviceNotificationBoundary update) {
-		if (update.getMessageDetails().size() != 1) {
-			return Mono.error(new IllegalArgumentException("messageDetails must include 1 device only!"));
-		}
-		
 		update = this.helper.initNotification(update);
 		DeviceEntity entity = this.helper.extractEntity(update);
 		
 		return this.service
 				.updateDevice(id, entity)
-				.thenReturn(Tuples.of(entity, update))
+				.then(this.service
+						.getDeviceById(id))
+				.zipWith(Mono.just(update))
 				.map(this.helper::insertEntityIntoNotification)
-				// Eject message here.
+				.flatMap(this::sendToKafka)
 				.log()
 				.then();
 	}
@@ -83,7 +108,7 @@ public class NotificationServiceImpl implements NotificationService {
 					return this.helper
 							.entityToNewNotification(entity, statusUpdateMessage);
 				})
-				// Eject message here.
+				.flatMap(this::sendToKafka)
 				.log()
 				.then();
 	}
@@ -116,13 +141,8 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public Flux<DeviceNotificationBoundary> getDevicesByExample(DeviceNotificationBoundary example) {
-		if (example.getMessageDetails().size() != 1) {
-			return Flux.error(new IllegalArgumentException("messageDetails must include 1 device only!"));
-		}
-		
 		example = this.helper.initNotification(example);
 		DeviceEntity exampleEntity = this.helper.extractEntity(example);
-		exampleEntity.setAlias(null);
 		System.err.println(exampleEntity);
 		
 		String getMessage = "Retrieval of devices by example - device with (id=%s) returned.";
@@ -144,7 +164,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.deleteAllDevices()
 				.thenReturn(this.helper
 						.entityToNewNotification(null, deleteMessage))
-				// Eject message here.
+				.flatMap(this::sendToKafka)
 				.log()
 				.then();
 	}
@@ -159,7 +179,7 @@ public class NotificationServiceImpl implements NotificationService {
 					return this.helper
 							.entityToNewNotification(entity, deleteMessage);
 				})
-				// Eject message here.
+				.flatMap(this::sendToKafka)
 				.log()
 				.then(this.service
 						.deleteDeviceById(id));
