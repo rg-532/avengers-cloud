@@ -3,6 +3,7 @@ package app;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -30,7 +31,10 @@ public class ManagerServiceImpl implements ManagerService {
 			return Mono.error(new IllegalArgumentException("ManagerServiceImpl :: Location must not be null."));
 		}
 		
-		device.setId(null);
+		if (device.getId() == null) {
+			device.setId(UUID.randomUUID().toString());
+		}
+		
 		device.setRegistrationTimestamp(new Date());
 		device.setLastUpdateTimestamp(new Date());
 		
