@@ -7,4 +7,4 @@
 #      - 'MONGO_INITDB_ROOT_USERNAME=root'
 #    ports:
 #      # Change host's port to avoid collision with local MongoDB installation.
-#      - '27027:27017'
+#      - '27018:27017'
